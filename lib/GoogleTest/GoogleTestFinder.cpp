@@ -31,6 +31,10 @@ GoogleTestFinder::GoogleTestFinder() : TestFinder() {
   mutationOperators.emplace_back(make_unique<NegateConditionMutationOperator>());
 }
 
+std::set<Module *> &GoogleTestFinder::getRequiredModules() {
+  return requiredModules;
+}
+
 /// The algorithm is the following:
 ///
 /// Each test has an instance of type TestInfo associated with it
@@ -197,6 +201,8 @@ std::vector<std::unique_ptr<Test>> GoogleTestFinder::findTests(Context &Ctx) {
 
       assert(TestBodyFunction && "Cannot find the TestBody function for the Test");
 
+      requiredModules.insert(TestBodyFunction->getParent());
+
       tests.emplace_back(make_unique<GoogleTest_Test>(TestName.str(),
                                                       TestBodyFunction,
                                                       Ctx.getStaticConstructors()));
@@ -258,6 +264,7 @@ std::vector<Testee> GoogleTestFinder::findTestees(Test *Test,
     /// as the test itself, then we are not looking for mutation points
     /// in this function assuming it to be a helper function, or the test itself
     if (traverseeFunction->getParent() != testBodyModule) {
+      requiredModules.insert(traversee.first->getParent());
       testees.push_back(traversee);
     }
 

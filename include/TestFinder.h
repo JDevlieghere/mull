@@ -3,9 +3,12 @@
 #include "MutationPoint.h"
 #include "Test.h"
 
+#include <set>
+
 namespace llvm {
 
 class Function;
+class Module;
 
 }
 
@@ -18,6 +21,8 @@ typedef std::pair<llvm::Function *, int> Testee;
 
 class TestFinder {
 public:
+  virtual std::set<llvm::Module *> &getRequiredModules() = 0;
+
   virtual std::vector<std::unique_ptr<Test>> findTests(Context &Ctx) = 0;
   virtual std::vector<Testee> findTestees(Test *Test, Context &Ctx, int maxDistance) = 0;
   virtual std::vector<std::unique_ptr<MutationPoint>> findMutationPoints(

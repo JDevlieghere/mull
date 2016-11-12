@@ -7,6 +7,7 @@
 #include "llvm/ADT/StringMap.h"
 
 #include <map>
+#include <set>
 #include <vector>
 
 namespace llvm {
@@ -27,8 +28,11 @@ class GoogleTestFinder : public TestFinder {
   std::map<llvm::Function *, std::vector<MutationPoint *>> MutationPointsRegistry;
 
   std::vector<std::unique_ptr<MutationOperator>> mutationOperators;
+  std::set<llvm::Module *> requiredModules;
 public:
   explicit GoogleTestFinder();
+
+  std::set<llvm::Module *> &getRequiredModules() override;
 
   std::vector<std::unique_ptr<Test>> findTests(Context &Ctx) override;
   std::vector<Testee> findTestees(Test *Test, Context &Ctx, int maxDistance) override;

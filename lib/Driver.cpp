@@ -141,7 +141,7 @@ std::vector<std::unique_ptr<TestResult>> Driver::Run() {
     Results.push_back(std::move(Result));
   }
 
-//  outs() << "Driver::Run::end\n";
+  outs() << Finder.getRequiredModules().size() << " modules were required\n\n";
 
   return Results;
 }
